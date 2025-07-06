@@ -5,6 +5,7 @@ import { Pause, Play } from '@tamagui/lucide-icons';
 import { Audio } from 'expo-av';
 import React, { useEffect, useRef, useState } from 'react';
 import { Vibration } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
 
 const PREPARAR = 'Preparar';
 const EXERCICIO = 'Exercício';
@@ -30,6 +31,15 @@ export default function TimerScreen() {
   const [isRunning, setIsRunning] = useState(false);
   const intervalRef = useRef<number | null>(null);
   const [elapsed, setElapsed] = useState(0);
+
+  // Atualizar tempo quando o preset muda
+  useEffect(() => {
+    if (!isRunning) {
+      setTime(preparar);
+    } else if (stage === PREPARAR) {
+      setTime(preparar);
+    }
+  }, [preparar, isRunning, stage]);
 
   // Atualiza valores iniciais ao iniciar
   const handleStart = () => {
@@ -185,184 +195,185 @@ export default function TimerScreen() {
   }
 
   return (
-    <View
-      flex={1}
-      backgroundColor="#222"
-      alignItems="center"
-      justifyContent="center"
-      paddingTop={24}
-    >
-      {/* Header */}
-      <Stack width="100%" alignItems="center" marginBottom={8}>
-        <Text
-          color="#FFF700"
-          fontWeight="bold"
-          fontSize={18}
-          marginBottom={4}
-        >
-          {nome?.toUpperCase() || 'TEMPORIZADOR'}
-        </Text>
-        <Text
-          color="#fff"
-          fontWeight="bold"
-          fontSize={20}
-          marginBottom={2}
-        >
-          {toMMSS(elapsed)}
-        </Text>
-      </Stack>
-      
-      {/* Bloco principal colorido */}
+    <SafeAreaView style={{ flex: 1, backgroundColor: '#222' }}>
       <View
-        width="100%"
+        flex={1}
+        backgroundColor="#222"
         alignItems="center"
         justifyContent="center"
-        paddingVertical={24}
-        backgroundColor={STAGE_COLORS[stage] || '#FFF700'}
-      > 
-        <Text
-          fontSize={32}
-          fontWeight="bold"
-          color="#222"
-          marginBottom={8}
-          letterSpacing={2}
-        >
-          {stage.toUpperCase()}
-        </Text>
-        <Text
-          fontSize={96}
-          fontWeight="bold"
-          color="#222"
-          marginBottom={8}
-        >
-          {String(Math.floor(time / 60)).padStart(2, '0')}:{String(time % 60).padStart(2, '0')}
-        </Text>
-      </View>
-      
-      {/* Próxima etapa/tempo */}
-      {proximaEtapa && (
-        <Stack
+        paddingTop={24}
+      >
+        {/* Header */}
+        <Stack width="100%" alignItems="center" marginBottom={8}>
+          <Text
+            color="#FFF700"
+            fontWeight="bold"
+            fontSize={18}
+            marginBottom={4}
+          >
+            {nome?.toUpperCase() || 'TEMPORIZADOR'}
+          </Text>
+          <Text
+            color="#fff"
+            fontWeight="bold"
+            fontSize={20}
+            marginBottom={2}
+          >
+            {toMMSS(elapsed)}
+          </Text>
+        </Stack>
+        
+        {/* Bloco principal colorido */}
+        <View
           width="100%"
           alignItems="center"
           justifyContent="center"
-          paddingVertical={12}
-          backgroundColor={STAGE_COLORS[proximaEtapa] || '#7BFF7B'}
-          flexDirection="row"
+          paddingVertical={24}
+          backgroundColor={STAGE_COLORS[stage] || '#FFF700'}
         > 
-          <Text
-            fontSize={20}
-            fontWeight="bold"
-            color="#222"
-            marginRight={8}
-          >
-            {proximaEtapa.toUpperCase()}:
-          </Text>
           <Text
             fontSize={32}
             fontWeight="bold"
             color="#222"
+            marginBottom={8}
+            letterSpacing={2}
           >
-            {String(Math.floor(proximoTempo / 60)).padStart(2, '0')}:{String(proximoTempo % 60).padStart(2, '0')}
-          </Text>
-        </Stack>
-      )}
-      
-      {/* Rodadas e ciclos */}
-      <Stack
-        width="100%"
-        justifyContent="space-around"
-        alignItems="center"
-        marginTop={24}
-        flexDirection="row"
-      >
-        <Stack alignItems="center" flex={1}>
-          <Text
-            fontSize={48}
-            fontWeight="bold"
-            color="#00BFFF"
-          >
-            {rodadas - rodada + 1}
+            {stage.toUpperCase()}
           </Text>
           <Text
-            color="#aaa"
-            fontSize={12}
+            fontSize={96}
             fontWeight="bold"
-            textAlign="center"
-            marginTop={2}
+            color="#222"
+            marginBottom={8}
           >
-            RODADAS PARA TERMINAR
+            {String(Math.floor(time / 60)).padStart(2, '0')}:{String(time % 60).padStart(2, '0')}
           </Text>
-        </Stack>
+        </View>
         
-        <Stack alignItems="center" justifyContent="center" flex={1}>
-          <Button
-            size="$6"
-            borderRadius={150}
-            backgroundColor="#333"
-            borderWidth={6}
-            borderColor="#FFF700"
-            shadowColor="#000"
-            shadowOpacity={0.2}
-            shadowRadius={8}
-            elevation={4}
-            marginBottom={6}
-            onPress={isRunning ? () => setIsRunning(false) : handleStart}
+        {/* Próxima etapa/tempo */}
+        {proximaEtapa && (
+          <Stack
+            width="100%"
             alignItems="center"
             justifyContent="center"
-            width='$11'
-            height='$11'
-          >
-            {isRunning ? (
-              <Pause size={46} color="#FFF700" />
-            ) : (
-              <Play size={46} color="#FFF700" />
-            )}
-          </Button>
+            paddingVertical={12}
+            backgroundColor={STAGE_COLORS[proximaEtapa] || '#7BFF7B'}
+            flexDirection="row"
+          > 
+            <Text
+              fontSize={20}
+              fontWeight="bold"
+              color="#222"
+              marginRight={8}
+            >
+              {proximaEtapa.toUpperCase()}:
+            </Text>
+            <Text
+              fontSize={32}
+              fontWeight="bold"
+              color="#222"
+            >
+              {String(Math.floor(proximoTempo / 60)).padStart(2, '0')}:{String(proximoTempo % 60).padStart(2, '0')}
+            </Text>
+          </Stack>
+        )}
+        
+        {/* Rodadas e ciclos */}
+        <Stack
+          width="100%"
+          justifyContent="space-around"
+          alignItems="center"
+          marginTop={24}
+          flexDirection="row"
+        >
+          <Stack alignItems="center" flex={1}>
+            <Text
+              fontSize={48}
+              fontWeight="bold"
+              color="#00BFFF"
+            >
+              {rodadas - rodada + 1}
+            </Text>
+            <Text
+              color="#aaa"
+              fontSize={12}
+              fontWeight="bold"
+              textAlign="center"
+              marginTop={2}
+            >
+              RODADAS PARA TERMINAR
+            </Text>
+          </Stack>
+          
+          <Stack alignItems="center" justifyContent="center" flex={1}>
+            <Button
+              size="$6"
+              borderRadius={150}
+              backgroundColor="#333"
+              borderWidth={6}
+              borderColor="#FFF700"
+              shadowColor="#000"
+              shadowOpacity={0.2}
+              shadowRadius={8}
+              marginBottom={6}
+              onPress={isRunning ? () => setIsRunning(false) : handleStart}
+              alignItems="center"
+              justifyContent="center"
+              width='$11'
+              height='$11'
+            >
+              {isRunning ? (
+                <Pause size={46} color="#FFF700" />
+              ) : (
+                <Play size={46} color="#FFF700" />
+              )}
+            </Button>
+            <Text
+              color="#FFF700"
+              fontWeight="bold"
+              fontSize={16}
+            >
+              {isRunning ? 'PAUSAR' : rodada === 1 && ciclo === 1 && time === preparar ? 'INICIAR' : 'RETOMAR'}
+            </Text>
+          </Stack>
+          
+          <Stack alignItems="center" flex={1}>
+            <Text
+              fontSize={48}
+              fontWeight="bold"
+              color="#FFF700"
+            >
+              {ciclos - ciclo + 1}
+            </Text>
+            <Text
+              color="#aaa"
+              fontSize={12}
+              fontWeight="bold"
+              textAlign="center"
+              marginTop={2}
+            >
+              CICLOS PARA TERMINAR
+            </Text>
+          </Stack>
+        </Stack>
+        
+        <Button
+          marginTop={24}
+          backgroundColor="#FF5C5C"
+          paddingHorizontal={32}
+          paddingVertical={12}
+          borderRadius={8}
+          onPress={handleReset}
+        >
           <Text
-            color="#FFF700"
+            color="#fff"
             fontWeight="bold"
             fontSize={16}
           >
-            {isRunning ? 'PAUSAR' : rodada === 1 && ciclo === 1 && time === preparar ? 'INICIAR' : 'RETOMAR'}
+            RESETAR
           </Text>
-        </Stack>
-        
-        <Stack alignItems="center" flex={1}>
-          <Text
-            fontSize={48}
-            fontWeight="bold"
-            color="#FFF700"
-          >
-            {ciclos - ciclo + 1}
-          </Text>
-          <Text
-            color="#aaa"
-            fontSize={12}
-            fontWeight="bold"
-            textAlign="center"
-            marginTop={2}
-          >
-            CICLOS PARA TERMINAR
-          </Text>
-        </Stack>
-      </Stack>
-      
-      <Button
-        marginTop={24}
-        backgroundColor="#FF5C5C"
-        paddingHorizontal={32}
-        paddingVertical={12}
-        borderRadius={8}
-        onPress={handleReset}
-      >
-        <Text
-          color="#fff"
-          fontWeight="bold"
-          fontSize={16}
-        >
-          RESETAR
-        </Text>
-      </Button>
-    </View>
+        </Button>
+      </View>
+    </SafeAreaView>
   );
 } 
