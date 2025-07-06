@@ -39,13 +39,39 @@ export default function TimerScreen() {
     setCiclo(1);
     setElapsed(0);
     setIsRunning(true);
+    
+    // Tocar som de início
+    playBeep(PREPARAR);
   };
 
-  // Função para tocar beep usando expo-av
-  const playBeep = async () => {
+  // Função para tocar beep específico para cada etapa
+  const playBeep = async (currentStage: string) => {
     try {
+      let soundFile;
+      
+      // Escolher som baseado na etapa
+      switch (currentStage) {
+        case PREPARAR:
+          soundFile = require('@/assets/sounds/preparar.mp3');
+          break;
+        case EXERCICIO:
+          soundFile = require('@/assets/sounds/exercicio.mp3');
+          break;
+        case DESCANSAR:
+          soundFile = require('@/assets/sounds/descanso.mp3');
+          break;
+        case DESCANSO_CICLO:
+          soundFile = require('@/assets/sounds/descanso-ciclo.mp3');
+          break;
+        case 'FINAL':
+          soundFile = require('@/assets/sounds/final.mp3');
+          break;
+        default:
+          soundFile = require('@/assets/sounds/beep.mp3');
+      }
+      
       const { sound } = await Audio.Sound.createAsync(
-        require('@/assets/sounds/beep.mp3'),
+        soundFile,
         { shouldPlay: true }
       );
       sound.setOnPlaybackStatusUpdate((status: any) => {
@@ -55,13 +81,14 @@ export default function TimerScreen() {
       });
     } catch (e) {
       // Silencioso se não encontrar o arquivo
+      console.log('Som não encontrado:', e);
     }
   };
 
   // Função para avançar para a próxima etapa
   const nextStage = () => {
     Vibration.vibrate(300);
-    playBeep();
+    playBeep(stage);
     if (stage === PREPARAR) {
       setStage(EXERCICIO);
       setTime(exercicio);
@@ -77,6 +104,8 @@ export default function TimerScreen() {
         setStage(DESCANSO_CICLO);
         setTime(descansoEntreCiclos);
       } else {
+        // Tocar som de finalização
+        playBeep('FINAL');
         setIsRunning(false);
       }
     } else if (stage === DESCANSO_CICLO) {
