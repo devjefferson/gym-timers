@@ -1,16 +1,12 @@
 import { useConfig } from '@/components/ConfigContext';
-import React, { useState } from 'react';
+import { Button } from '@tamagui/button';
 import {
-    Alert,
-    KeyboardAvoidingView,
-    Platform,
-    ScrollView,
-    StyleSheet,
-    Text,
-    TextInput,
-    TouchableOpacity,
-    View,
-} from 'react-native';
+  Text
+} from '@tamagui/core';
+import { ScrollView } from '@tamagui/scroll-view';
+import { XStack, YStack } from '@tamagui/stacks';
+import React, { useState } from 'react';
+import { Alert, KeyboardAvoidingView, Platform, TextInput } from 'react-native';
 
 export default function SettingsScreen() {
   const { timers, selectedId, setSelectedId, updateTimer, deleteTimer } = useConfig();
@@ -96,352 +92,294 @@ export default function SettingsScreen() {
     return `${String(m).padStart(2, '0')}:${String(s).padStart(2, '0')}`;
   };
 
-  const parseTime = (timeString: string) => {
-    const parts = timeString.split(':');
-    if (parts.length === 2) {
-      const minutes = parseInt(parts[0]) || 0;
-      const seconds = parseInt(parts[1]) || 0;
-      return minutes * 60 + seconds;
-    }
-    return 0;
-  };
-
-  const formatTimeInput = (seconds: number) => {
-    const m = Math.floor(seconds / 60);
-    const s = seconds % 60;
-    return `${String(m).padStart(2, '0')}:${String(s).padStart(2, '0')}`;
-  };
-
   return (
     <KeyboardAvoidingView
-      style={styles.container}
+      style={{ flex: 1 }}
       behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
     >
-      <ScrollView style={styles.scrollView}>
-        <Text style={styles.title}>CONFIGURAÇÃO</Text>
+      <ScrollView flex={1} padding={16} backgroundColor="#222">
+        <Text
+          fontSize={24}
+          fontWeight="bold"
+          color="#FFF700"
+          textAlign="center"
+          marginBottom={20}
+          letterSpacing={2}
+        >
+          CONFIGURAÇÃO
+        </Text>
         
         {timers.map((timer) => (
-          <View key={timer.id} style={styles.timerCard}>
-            <View style={styles.timerHeader}>
-              <TouchableOpacity
-                style={[
-                  styles.selectButton,
-                  selectedId === timer.id && styles.selectedButton
-                ]}
+          <YStack
+            key={timer.id}
+            backgroundColor="#333"
+            borderRadius={12}
+            padding={16}
+            marginBottom={16}
+            gap={12}
+          >
+            <XStack justifyContent="space-between" alignItems="center" marginBottom={16}>
+              <Button
+                backgroundColor={selectedId === timer.id ? "#FFF700" : "#555"}
+                paddingHorizontal={16}
+                paddingVertical={8}
+                borderRadius={6}
                 onPress={() => setSelectedId(timer.id)}
               >
-                <Text style={[
-                  styles.selectButtonText,
-                  selectedId === timer.id && styles.selectedButtonText
-                ]}>
+                <Text
+                  color={selectedId === timer.id ? "#222" : "#fff"}
+                  fontWeight="bold"
+                  fontSize={12}
+                >
                   {selectedId === timer.id ? '✓ SELECIONADO' : 'SELECIONAR'}
                 </Text>
-              </TouchableOpacity>
+              </Button>
               
-              <View style={styles.actionButtons}>
+              <XStack gap={8}>
                 {editingTimer === timer.id ? (
                   <>
-                    <TouchableOpacity style={styles.saveButton} onPress={saveEdit}>
-                      <Text style={styles.saveButtonText}>SALVAR</Text>
-                    </TouchableOpacity>
-                    <TouchableOpacity style={styles.cancelButton} onPress={cancelEdit}>
-                      <Text style={styles.cancelButtonText}>CANCELAR</Text>
-                    </TouchableOpacity>
+                    <Button
+                      backgroundColor="#7BFF7B"
+                      paddingHorizontal={12}
+                      paddingVertical={6}
+                      borderRadius={4}
+                      onPress={saveEdit}
+                    >
+                      <Text color="#222" fontWeight="bold" fontSize={10}>
+                        SALVAR
+                      </Text>
+                    </Button>
+                    <Button
+                      backgroundColor="#FFD700"
+                      paddingHorizontal={12}
+                      paddingVertical={6}
+                      borderRadius={4}
+                      onPress={cancelEdit}
+                    >
+                      <Text color="#222" fontWeight="bold" fontSize={10}>
+                        CANCELAR
+                      </Text>
+                    </Button>
                   </>
                 ) : (
                   <>
-                    <TouchableOpacity
-                      style={styles.editButton}
+                    <Button
+                      backgroundColor="#00BFFF"
+                      paddingHorizontal={12}
+                      paddingVertical={6}
+                      borderRadius={4}
                       onPress={() => startEditing(timer)}
                     >
-                      <Text style={styles.editButtonText}>EDITAR</Text>
-                    </TouchableOpacity>
-                    <TouchableOpacity
-                      style={styles.deleteButton}
+                      <Text color="#fff" fontWeight="bold" fontSize={10}>
+                        EDITAR
+                      </Text>
+                    </Button>
+                    <Button
+                      backgroundColor="#FF5C5C"
+                      paddingHorizontal={12}
+                      paddingVertical={6}
+                      borderRadius={4}
                       onPress={() => handleDelete(timer.id)}
                     >
-                      <Text style={styles.deleteButtonText}>EXCLUIR</Text>
-                    </TouchableOpacity>
+                      <Text color="#fff" fontWeight="bold" fontSize={10}>
+                        EXCLUIR
+                      </Text>
+                    </Button>
                   </>
                 )}
-              </View>
-            </View>
+              </XStack>
+            </XStack>
 
             {editingTimer === timer.id ? (
-              <View style={styles.editForm}>
+              <YStack gap={12}>
                 <TextInput
-                  style={styles.input}
+                  style={{
+                    backgroundColor: "#444",
+                    color: "#fff",
+                    paddingHorizontal: 12,
+                    paddingVertical: 8,
+                    borderRadius: 6,
+                    fontSize: 16,
+                  }}
                   value={editValues.nome}
-                  onChangeText={(text) => setEditValues(prev => ({ ...prev, nome: text }))}
+                  onChangeText={(text: string) => setEditValues(prev => ({ ...prev, nome: text }))}
                   placeholder="Nome do temporizador"
                   placeholderTextColor="#666"
                 />
                 
-                <View style={styles.timeInputs}>
-                  <View style={styles.timeInput}>
-                    <Text style={styles.inputLabel}>Preparar</Text>
-                    <TextInput
-                      style={styles.input}
-                      value={editValues.preparar}
-                      onChangeText={(text) => setEditValues(prev => ({ ...prev, preparar: text }))}
-                      placeholder="00:00"
-                      placeholderTextColor="#666"
-                    />
-                  </View>
+                <YStack gap={8}>
+                  <YStack gap={4}>
+                    <Text color="#FFF700" fontWeight="bold" fontSize={14} marginBottom={4}>
+                      Preparar
+                    </Text>
+                                         <TextInput
+                       style={{
+                         backgroundColor: "#444",
+                         color: "#fff",
+                         paddingHorizontal: 12,
+                         paddingVertical: 8,
+                         borderRadius: 6,
+                         fontSize: 16,
+                       }}
+                       value={editValues.preparar}
+                       onChangeText={(text: string) => setEditValues(prev => ({ ...prev, preparar: text }))}
+                       placeholder="00:00"
+                       placeholderTextColor="#666"
+                     />
+                  </YStack>
                   
-                  <View style={styles.timeInput}>
-                    <Text style={styles.inputLabel}>Exercício</Text>
+                  <YStack gap={4}>
+                    <Text color="#FFF700" fontWeight="bold" fontSize={14} marginBottom={4}>
+                      Exercício
+                    </Text>
                     <TextInput
-                      style={styles.input}
+                      style={{
+                        backgroundColor: "#444",
+                        color: "#fff",
+                        paddingHorizontal: 12,
+                        paddingVertical: 8,
+                        borderRadius: 6,
+                        fontSize: 16,
+                      }}
                       value={editValues.exercicio}
-                      onChangeText={(text) => setEditValues(prev => ({ ...prev, exercicio: text }))}
+                      onChangeText={(text: string) => setEditValues(prev => ({ ...prev, exercicio: text }))}
                       placeholder="00:00"
                       placeholderTextColor="#666"
                     />
-                  </View>
+                  </YStack>
                   
-                  <View style={styles.timeInput}>
-                    <Text style={styles.inputLabel}>Descansar</Text>
+                  <YStack gap={4}>
+                    <Text color="#FFF700" fontWeight="bold" fontSize={14} marginBottom={4}>
+                      Descansar
+                    </Text>
                     <TextInput
-                      style={styles.input}
+                      style={{
+                        backgroundColor: "#444",
+                        color: "#fff",
+                        paddingHorizontal: 12,
+                        paddingVertical: 8,
+                        borderRadius: 6,
+                        fontSize: 16,
+                      }}
                       value={editValues.descanso}
-                      onChangeText={(text) => setEditValues(prev => ({ ...prev, descanso: text }))}
+                      onChangeText={(text: string) => setEditValues(prev => ({ ...prev, descanso: text }))}
                       placeholder="00:00"
                       placeholderTextColor="#666"
                     />
-                  </View>
+                  </YStack>
                   
-                  <View style={styles.timeInput}>
-                    <Text style={styles.inputLabel}>Descanso entre ciclos</Text>
+                  <YStack gap={4}>
+                    <Text color="#FFF700" fontWeight="bold" fontSize={14} marginBottom={4}>
+                      Descanso entre ciclos
+                    </Text>
                     <TextInput
-                      style={styles.input}
+                      style={{
+                        backgroundColor: "#444",
+                        color: "#fff",
+                        paddingHorizontal: 12,
+                        paddingVertical: 8,
+                        borderRadius: 6,
+                        fontSize: 16,
+                      }}
                       value={editValues.descansoEntreCiclos}
-                      onChangeText={(text) => setEditValues(prev => ({ ...prev, descansoEntreCiclos: text }))}
+                      onChangeText={(text: string) => setEditValues(prev => ({ ...prev, descansoEntreCiclos: text }))}
                       placeholder="00:00"
                       placeholderTextColor="#666"
                     />
-                  </View>
-                </View>
+                  </YStack>
+                </YStack>
                 
-                <View style={styles.numberInputs}>
-                  <View style={styles.numberInput}>
-                    <Text style={styles.inputLabel}>Rodadas</Text>
+                <XStack gap={12}>
+                  <YStack flex={1} gap={4}>
+                    <Text color="#FFF700" fontWeight="bold" fontSize={14} marginBottom={4}>
+                      Rodadas
+                    </Text>
                     <TextInput
-                      style={styles.input}
+                      style={{
+                        backgroundColor: "#444",
+                        color: "#fff",
+                        paddingHorizontal: 12,
+                        paddingVertical: 8,
+                        borderRadius: 6,
+                        fontSize: 16,
+                      }}
                       value={editValues.rodadas}
-                      onChangeText={(text) => setEditValues(prev => ({ ...prev, rodadas: text }))}
+                      onChangeText={(text: string) => setEditValues(prev => ({ ...prev, rodadas: text }))}
                       placeholder="0"
                       placeholderTextColor="#666"
                       keyboardType="numeric"
                     />
-                  </View>
+                  </YStack>
                   
-                  <View style={styles.numberInput}>
-                    <Text style={styles.inputLabel}>Ciclos</Text>
+                  <YStack flex={1} gap={4}>
+                    <Text color="#FFF700" fontWeight="bold" fontSize={14} marginBottom={4}>
+                      Ciclos
+                    </Text>
                     <TextInput
-                      style={styles.input}
+                      style={{
+                        backgroundColor: "#444",
+                        color: "#fff",
+                        paddingHorizontal: 12,
+                        paddingVertical: 8,
+                        borderRadius: 6,
+                        fontSize: 16,
+                      }}
                       value={editValues.ciclos}
-                      onChangeText={(text) => setEditValues(prev => ({ ...prev, ciclos: text }))}
+                      onChangeText={(text: string) => setEditValues(prev => ({ ...prev, ciclos: text }))}
                       placeholder="0"
                       placeholderTextColor="#666"
                       keyboardType="numeric"
                     />
-                  </View>
-                </View>
-              </View>
+                  </YStack>
+                </XStack>
+              </YStack>
             ) : (
-              <View style={styles.timerInfo}>
-                <Text style={styles.timerName}>{timer.nome}</Text>
+              <YStack gap={12}>
+                <Text
+                  fontSize={18}
+                  fontWeight="bold"
+                  color="#FFF700"
+                  textAlign="center"
+                >
+                  {timer.nome}
+                </Text>
                 
-                <View style={styles.timerDetails}>
-                  <View style={styles.detailItem}>
-                    <Text style={styles.detailLabel}>Preparar:</Text>
-                    <Text style={styles.detailValue}>{formatTime(timer.preparar)}</Text>
-                  </View>
+                <YStack gap={8}>
+                  <XStack justifyContent="space-between" alignItems="center">
+                    <Text color="#aaa" fontSize={14}>Preparar:</Text>
+                    <Text color="#fff" fontSize={14} fontWeight="bold">{formatTime(timer.preparar)}</Text>
+                  </XStack>
                   
-                  <View style={styles.detailItem}>
-                    <Text style={styles.detailLabel}>Exercício:</Text>
-                    <Text style={styles.detailValue}>{formatTime(timer.exercicio)}</Text>
-                  </View>
+                  <XStack justifyContent="space-between" alignItems="center">
+                    <Text color="#aaa" fontSize={14}>Exercício:</Text>
+                    <Text color="#fff" fontSize={14} fontWeight="bold">{formatTime(timer.exercicio)}</Text>
+                  </XStack>
                   
-                  <View style={styles.detailItem}>
-                    <Text style={styles.detailLabel}>Descansar:</Text>
-                    <Text style={styles.detailValue}>{formatTime(timer.descanso)}</Text>
-                  </View>
+                  <XStack justifyContent="space-between" alignItems="center">
+                    <Text color="#aaa" fontSize={14}>Descansar:</Text>
+                    <Text color="#fff" fontSize={14} fontWeight="bold">{formatTime(timer.descanso)}</Text>
+                  </XStack>
                   
-                  <View style={styles.detailItem}>
-                    <Text style={styles.detailLabel}>Descanso entre ciclos:</Text>
-                    <Text style={styles.detailValue}>{formatTime(timer.descansoEntreCiclos)}</Text>
-                  </View>
+                  <XStack justifyContent="space-between" alignItems="center">
+                    <Text color="#aaa" fontSize={14}>Descanso entre ciclos:</Text>
+                    <Text color="#fff" fontSize={14} fontWeight="bold">{formatTime(timer.descansoEntreCiclos)}</Text>
+                  </XStack>
                   
-                  <View style={styles.detailItem}>
-                    <Text style={styles.detailLabel}>Rodadas:</Text>
-                    <Text style={styles.detailValue}>{timer.rodadas}</Text>
-                  </View>
+                  <XStack justifyContent="space-between" alignItems="center">
+                    <Text color="#aaa" fontSize={14}>Rodadas:</Text>
+                    <Text color="#fff" fontSize={14} fontWeight="bold">{timer.rodadas}</Text>
+                  </XStack>
                   
-                  <View style={styles.detailItem}>
-                    <Text style={styles.detailLabel}>Ciclos:</Text>
-                    <Text style={styles.detailValue}>{timer.ciclos}</Text>
-                  </View>
-                </View>
-              </View>
+                  <XStack justifyContent="space-between" alignItems="center">
+                    <Text color="#aaa" fontSize={14}>Ciclos:</Text>
+                    <Text color="#fff" fontSize={14} fontWeight="bold">{timer.ciclos}</Text>
+                  </XStack>
+                </YStack>
+              </YStack>
             )}
-          </View>
+          </YStack>
         ))}
       </ScrollView>
     </KeyboardAvoidingView>
   );
-}
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#222',
-  },
-  scrollView: {
-    flex: 1,
-    padding: 16,
-  },
-  title: {
-    fontSize: 24,
-    fontWeight: 'bold',
-    color: '#FFF700',
-    textAlign: 'center',
-    marginBottom: 20,
-    letterSpacing: 2,
-  },
-  timerCard: {
-    backgroundColor: '#333',
-    borderRadius: 12,
-    padding: 16,
-    marginBottom: 16,
-  },
-  timerHeader: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    marginBottom: 16,
-  },
-  selectButton: {
-    backgroundColor: '#555',
-    paddingHorizontal: 16,
-    paddingVertical: 8,
-    borderRadius: 6,
-  },
-  selectedButton: {
-    backgroundColor: '#FFF700',
-  },
-  selectButtonText: {
-    color: '#fff',
-    fontWeight: 'bold',
-    fontSize: 12,
-  },
-  selectedButtonText: {
-    color: '#222',
-  },
-  actionButtons: {
-    flexDirection: 'row',
-    gap: 8,
-  },
-  editButton: {
-    backgroundColor: '#00BFFF',
-    paddingHorizontal: 12,
-    paddingVertical: 6,
-    borderRadius: 4,
-  },
-  editButtonText: {
-    color: '#fff',
-    fontWeight: 'bold',
-    fontSize: 10,
-  },
-  deleteButton: {
-    backgroundColor: '#FF5C5C',
-    paddingHorizontal: 12,
-    paddingVertical: 6,
-    borderRadius: 4,
-  },
-  deleteButtonText: {
-    color: '#fff',
-    fontWeight: 'bold',
-    fontSize: 10,
-  },
-  saveButton: {
-    backgroundColor: '#7BFF7B',
-    paddingHorizontal: 12,
-    paddingVertical: 6,
-    borderRadius: 4,
-  },
-  saveButtonText: {
-    color: '#222',
-    fontWeight: 'bold',
-    fontSize: 10,
-  },
-  cancelButton: {
-    backgroundColor: '#FFD700',
-    paddingHorizontal: 12,
-    paddingVertical: 6,
-    borderRadius: 4,
-  },
-  cancelButtonText: {
-    color: '#222',
-    fontWeight: 'bold',
-    fontSize: 10,
-  },
-  editForm: {
-    gap: 12,
-  },
-  input: {
-    backgroundColor: '#444',
-    color: '#fff',
-    paddingHorizontal: 12,
-    paddingVertical: 8,
-    borderRadius: 6,
-    fontSize: 16,
-  },
-  inputLabel: {
-    color: '#FFF700',
-    fontWeight: 'bold',
-    fontSize: 14,
-    marginBottom: 4,
-  },
-  timeInputs: {
-    gap: 8,
-  },
-  timeInput: {
-    gap: 4,
-  },
-  numberInputs: {
-    flexDirection: 'row',
-    gap: 12,
-  },
-  numberInput: {
-    flex: 1,
-    gap: 4,
-  },
-  timerInfo: {
-    gap: 12,
-  },
-  timerName: {
-    fontSize: 18,
-    fontWeight: 'bold',
-    color: '#FFF700',
-    textAlign: 'center',
-  },
-  timerDetails: {
-    gap: 8,
-  },
-  detailItem: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-  },
-  detailLabel: {
-    color: '#aaa',
-    fontSize: 14,
-  },
-  detailValue: {
-    color: '#fff',
-    fontSize: 14,
-    fontWeight: 'bold',
-  },
-}); 
+} 
