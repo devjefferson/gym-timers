@@ -1,3 +1,4 @@
+import AdvancedAdBanner from '@/components/AdvancedAdBanner';
 import { useConfig } from '@/components/ConfigContext';
 import { Button } from '@tamagui/button';
 import { Stack, Text, View } from '@tamagui/core';
@@ -31,6 +32,7 @@ export default function TimerScreen() {
   const [isRunning, setIsRunning] = useState(false);
   const intervalRef = useRef<number | null>(null);
   const [elapsed, setElapsed] = useState(0);
+  const [showAdBanner, setShowAdBanner] = useState(true);
 
   // Atualizar tempo quando o preset muda
   useEffect(() => {
@@ -194,8 +196,34 @@ export default function TimerScreen() {
     return `${String(m).padStart(2, '0')}:${String(s).padStart(2, '0')}`;
   }
 
+  // Função para fechar o banner
+  const handleCloseAd = () => {
+    setShowAdBanner(false);
+  };
+
+  // Função para ação do botão do anúncio
+  const handleAdButtonPress = () => {
+    // Aqui você pode implementar a lógica para abrir um link, 
+    // navegar para uma tela de promoção, etc.
+    console.log('Anúncio clicado!');
+  };
+
   return (
     <SafeAreaView style={{ flex: 1, backgroundColor: '#222' }}>
+      {/* Banner de Anúncio */}
+              <AdvancedAdBanner 
+          visible={showAdBanner}
+          title="PROMOÇÃO ESPECIAL"
+          subtitle="Desconto de 50% em suplementos"
+          backgroundColor="#FF6B35"
+          textColor="#fff"
+          showCloseButton={true}
+          onClose={handleCloseAd}
+          showButton={false}
+          buttonText="VER OFERTA"
+          onButtonPress={handleAdButtonPress}
+        />
+      
       <View
         flex={1}
         backgroundColor="#222"
