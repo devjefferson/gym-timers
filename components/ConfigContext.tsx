@@ -17,6 +17,7 @@ interface ConfigContextType {
   setSelectedId: (id: string) => void;
   updateTimer: (timer: Timer) => void;
   deleteTimer: (id: string) => void;
+  createTimer: (timer: Omit<Timer, 'id'>) => void;
 }
 
 const defaultTimers: Timer[] = [
@@ -50,6 +51,16 @@ const defaultTimers: Timer[] = [
     ciclos: 1,
     descansoEntreCiclos: 30,
   },
+  {
+    id: '4',
+    nome: 'Timer Personalizado',
+    preparar: 0,
+    exercicio: 0,
+    descanso: 0,
+    rodadas: 0,
+    ciclos: 0,
+    descansoEntreCiclos: 0,
+  },
 ];
 
 const ConfigContext = createContext<ConfigContextType | undefined>(undefined);
@@ -72,6 +83,16 @@ export function ConfigProvider({ children }: { children: React.ReactNode }) {
     }
   };
 
+  const createTimer = (timerData: Omit<Timer, 'id'>) => {
+    const newId = (Math.max(...timers.map(t => parseInt(t.id))) + 1).toString();
+    const newTimer: Timer = {
+      id: newId,
+      ...timerData,
+    };
+    setTimers(prev => [...prev, newTimer]);
+    setSelectedId(newId);
+  };
+
   return (
     <ConfigContext.Provider value={{
       timers,
@@ -79,6 +100,7 @@ export function ConfigProvider({ children }: { children: React.ReactNode }) {
       setSelectedId,
       updateTimer,
       deleteTimer,
+      createTimer,
     }}>
       {children}
     </ConfigContext.Provider>

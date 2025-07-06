@@ -10,7 +10,7 @@ import { Alert, KeyboardAvoidingView, Platform, TextInput } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 export default function SettingsScreen() {
-  const { timers, selectedId, setSelectedId, updateTimer, deleteTimer } = useConfig();
+  const { timers, selectedId, setSelectedId, updateTimer, deleteTimer, createTimer } = useConfig();
   const [editingTimer, setEditingTimer] = useState<string | null>(null);
   const [editValues, setEditValues] = useState<{
     nome: string;
@@ -96,6 +96,18 @@ export default function SettingsScreen() {
     );
   };
 
+  const handleCreateNewTimer = () => {
+    createTimer({
+      nome: 'Novo Timer',
+      preparar: 0,
+      exercicio: 0,
+      descanso: 0,
+      rodadas: 0,
+      ciclos: 0,
+      descansoEntreCiclos: 0,
+    });
+  };
+
   const formatTime = (seconds: number) => {
     const m = Math.floor(seconds / 60);
     const s = seconds % 60;
@@ -138,6 +150,27 @@ export default function SettingsScreen() {
           >
             CONFIGURAÇÃO
           </Text>
+          
+          {/* Botão para criar novo timer */}
+          <YStack
+            backgroundColor="#333"
+            borderRadius={12}
+            padding={16}
+            marginBottom={16}
+            alignItems="center"
+          >
+            <Button
+              backgroundColor="#7BFF7B"
+              paddingHorizontal={24}
+              paddingVertical={12}
+              borderRadius={8}
+              onPress={handleCreateNewTimer}
+            >
+              <Text color="#222" fontWeight="bold" fontSize={16}>
+                + CRIAR NOVO TIMER
+              </Text>
+            </Button>
+          </YStack>
           
           {timers.map((timer) => (
             <YStack
@@ -210,6 +243,7 @@ export default function SettingsScreen() {
                         paddingVertical={6}
                         borderRadius={4}
                         onPress={() => handleDelete(timer.id)}
+                        disabled={timers.length <= 1}
                       >
                         <Text color="#fff" fontWeight="bold" fontSize={10}>
                           EXCLUIR
