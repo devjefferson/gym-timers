@@ -10,9 +10,10 @@ import { SafeAreaProvider } from 'react-native-safe-area-context';
 import config from '../tamagui.config';
 
 import { ConfigProvider } from '@/components/ConfigContext';
+import SimpleSplashScreen from '@/components/SimpleSplashScreen';
 import { useColorScheme } from '@/hooks/useColorScheme';
 
-// Manter a splash screen visível enquanto carregamos recursos
+// Manter a splash screen visível
 SplashScreen.preventAutoHideAsync();
 
 export default function RootLayout() {
@@ -25,12 +26,11 @@ export default function RootLayout() {
   useEffect(() => {
     async function prepare() {
       try {
-        // Aguardar um pouco para mostrar a splash screen
-        await new Promise(resolve => setTimeout(resolve, 1000));
+        // Aguardar carregamento das fontes
+        await new Promise(resolve => setTimeout(resolve, 2000));
       } catch (e) {
-        console.warn(e);
+        console.warn('Erro durante inicialização:', e);
       } finally {
-        // Indicar que o app está pronto
         setAppIsReady(true);
       }
     }
@@ -40,13 +40,14 @@ export default function RootLayout() {
 
   useEffect(() => {
     if (appIsReady && loaded) {
-      // Esconder a splash screen quando tudo estiver pronto
+      // Esconder a splash screen
       SplashScreen.hideAsync();
     }
   }, [appIsReady, loaded]);
 
+  // Mostrar splash screen personalizada enquanto carrega
   if (!loaded || !appIsReady) {
-    return null;
+    return <SimpleSplashScreen visible={true} />;
   }
 
   return (
@@ -58,7 +59,7 @@ export default function RootLayout() {
               <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
               <Stack.Screen name="+not-found" />
             </Stack>
-            <StatusBar style="auto" />
+            <StatusBar style="light" backgroundColor="#222" />
           </ThemeProvider>
         </ConfigProvider>
       </TamaguiProvider>

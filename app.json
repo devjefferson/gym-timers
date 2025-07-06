@@ -1,6 +1,6 @@
 {
   "expo": {
-    "name": "Temporizador de Treino",
+    "name": "Temporizador de Treino - Gym Timer",
     "slug": "gym-timers",
     "version": "1.0.0",
     "orientation": "portrait",
@@ -8,15 +8,22 @@
     "scheme": "gymtimers",
     "userInterfaceStyle": "automatic",
     "newArchEnabled": true,
+    "splash": {
+      "image": "./assets/images/splash-icon.png",
+      "resizeMode": "contain",
+      "backgroundColor": "#222"
+    },
     "ios": {
-      "supportsTablet": true
+      "supportsTablet": true,
+      "bundleIdentifier": "com.ndiesuper.gymtimers"
     },
     "android": {
       "adaptiveIcon": {
         "foregroundImage": "./assets/images/adaptive-icon.png",
         "backgroundColor": "#222"
       },
-      "edgeToEdgeEnabled": true
+      "edgeToEdgeEnabled": true,
+      "package": "com.ndiesuper.gymtimers"
     },
     "web": {
       "bundler": "metro",
@@ -24,24 +31,16 @@
       "favicon": "./assets/images/favicon.png"
     },
     "plugins": [
-      "expo-router",
-      [
-        "expo-splash-screen",
-        {
-          "image": "./assets/images/splash-icon.png",
-          "imageWidth": 120,
-          "imageHeight": 120,
-          "resizeMode": "contain",
-          "backgroundColor": "#222",
-          "dark": {
-            "image": "./assets/images/splash-icon.png",
-            "backgroundColor": "#222"
-          }
-        }
-      ]
+      "expo-router"
     ],
     "experiments": {
       "typedRoutes": true
+    },
+    "extra": {
+      "router": {},
+      "eas": {
+        "projectId": "8f534c88-5ac0-490e-ad52-356a872954c1"
+      }
     }
   }
 }
