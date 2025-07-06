@@ -1,8 +1,10 @@
 import { useConfig } from '@/components/ConfigContext';
+import { Button } from '@tamagui/button';
+import { Stack, Text, View } from '@tamagui/core';
 import { Pause, Play } from '@tamagui/lucide-icons';
 import { Audio } from 'expo-av';
 import React, { useEffect, useRef, useState } from 'react';
-import { StyleSheet, Text, TouchableOpacity, Vibration, View } from 'react-native';
+import { Vibration } from 'react-native';
 
 const PREPARAR = 'Preparar';
 const EXERCICIO = 'Exercício';
@@ -154,190 +156,184 @@ export default function TimerScreen() {
   }
 
   return (
-    <View style={styles.container}>
+    <View
+      flex={1}
+      backgroundColor="#222"
+      alignItems="center"
+      justifyContent="center"
+      paddingTop={24}
+    >
       {/* Header */}
-      <View style={styles.header}>
-        <Text style={styles.headerTitle}>{nome?.toUpperCase() || 'TEMPORIZADOR'}</Text>
-        <Text style={styles.elapsed}>{toMMSS(elapsed)}</Text>
-      </View>
+      <Stack width="100%" alignItems="center" marginBottom={8}>
+        <Text
+          color="#FFF700"
+          fontWeight="bold"
+          fontSize={18}
+          marginBottom={4}
+        >
+          {nome?.toUpperCase() || 'TEMPORIZADOR'}
+        </Text>
+        <Text
+          color="#fff"
+          fontWeight="bold"
+          fontSize={20}
+          marginBottom={2}
+        >
+          {toMMSS(elapsed)}
+        </Text>
+      </Stack>
       
       {/* Bloco principal colorido */}
-      <View style={[styles.mainBlock, { backgroundColor: STAGE_COLORS[stage] || '#FFF700' }]}> 
-        <Text style={styles.stage}>{stage.toUpperCase()}</Text>
-        <Text style={styles.time}>
+      <View
+        width="100%"
+        alignItems="center"
+        justifyContent="center"
+        paddingVertical={24}
+        backgroundColor={STAGE_COLORS[stage] || '#FFF700'}
+      > 
+        <Text
+          fontSize={32}
+          fontWeight="bold"
+          color="#222"
+          marginBottom={8}
+          letterSpacing={2}
+        >
+          {stage.toUpperCase()}
+        </Text>
+        <Text
+          fontSize={96}
+          fontWeight="bold"
+          color="#222"
+          marginBottom={8}
+        >
           {String(Math.floor(time / 60)).padStart(2, '0')}:{String(time % 60).padStart(2, '0')}
         </Text>
       </View>
       
       {/* Próxima etapa/tempo */}
       {proximaEtapa && (
-        <View style={[styles.nextBlock, { backgroundColor: STAGE_COLORS[proximaEtapa] || '#7BFF7B' }]}> 
-          <Text style={styles.nextLabel}>{proximaEtapa.toUpperCase()}:</Text>
-          <Text style={styles.nextTime}>
+        <Stack
+          width="100%"
+          alignItems="center"
+          justifyContent="center"
+          paddingVertical={12}
+          backgroundColor={STAGE_COLORS[proximaEtapa] || '#7BFF7B'}
+          flexDirection="row"
+        > 
+          <Text
+            fontSize={20}
+            fontWeight="bold"
+            color="#222"
+            marginRight={8}
+          >
+            {proximaEtapa.toUpperCase()}:
+          </Text>
+          <Text
+            fontSize={32}
+            fontWeight="bold"
+            color="#222"
+          >
             {String(Math.floor(proximoTempo / 60)).padStart(2, '0')}:{String(proximoTempo % 60).padStart(2, '0')}
           </Text>
-        </View>
+        </Stack>
       )}
       
       {/* Rodadas e ciclos */}
-      <View style={styles.bottomRow}>
-        <View style={styles.bottomItem}>
-          <Text style={[styles.bottomNumber, { color: '#00BFFF' }]}>{rodadas - rodada + 1}</Text>
-          <Text style={styles.bottomLabel}>RODADAS PARA TERMINAR</Text>
-        </View>
+      <Stack
+        width="100%"
+        justifyContent="space-around"
+        alignItems="center"
+        marginTop={24}
+        flexDirection="row"
+      >
+        <Stack alignItems="center" flex={1}>
+          <Text
+            fontSize={48}
+            fontWeight="bold"
+            color="#00BFFF"
+          >
+            {rodadas - rodada + 1}
+          </Text>
+          <Text
+            color="#aaa"
+            fontSize={12}
+            fontWeight="bold"
+            textAlign="center"
+            marginTop={2}
+          >
+            RODADAS PARA TERMINAR
+          </Text>
+        </Stack>
         
-        <TouchableOpacity style={styles.centerBtn} onPress={isRunning ? () => setIsRunning(false) : handleStart}>
-          <View style={styles.centerBtnCircle}>
-           
-              {isRunning ? (
-                 <Pause size={30} color="#FFF700" />
-              ) : (
-                <Play size={30} color="#FFF700" />
-               
-              )}
-            
-          </View>
-          <Text style={styles.centerBtnText}>
+        <Stack alignItems="center" justifyContent="center" flex={1}>
+          <Button
+            size="$6"
+            borderRadius={150}
+            backgroundColor="#333"
+            borderWidth={6}
+            borderColor="#FFF700"
+            shadowColor="#000"
+            shadowOpacity={0.2}
+            shadowRadius={8}
+            elevation={4}
+            marginBottom={6}
+            onPress={isRunning ? () => setIsRunning(false) : handleStart}
+            alignItems="center"
+            justifyContent="center"
+            width='$11'
+            height='$11'
+          >
+            {isRunning ? (
+              <Pause size={46} color="#FFF700" />
+            ) : (
+              <Play size={46} color="#FFF700" />
+            )}
+          </Button>
+          <Text
+            color="#FFF700"
+            fontWeight="bold"
+            fontSize={16}
+          >
             {isRunning ? 'PAUSAR' : rodada === 1 && ciclo === 1 && time === preparar ? 'INICIAR' : 'RETOMAR'}
           </Text>
-        </TouchableOpacity>
+        </Stack>
         
-        <View style={styles.bottomItem}>
-          <Text style={[styles.bottomNumber, { color: '#FFF700' }]}>{ciclos - ciclo + 1}</Text>
-          <Text style={styles.bottomLabel}>CICLOS PARA TERMINAR</Text>
-        </View>
-      </View>
+        <Stack alignItems="center" flex={1}>
+          <Text
+            fontSize={48}
+            fontWeight="bold"
+            color="#FFF700"
+          >
+            {ciclos - ciclo + 1}
+          </Text>
+          <Text
+            color="#aaa"
+            fontSize={12}
+            fontWeight="bold"
+            textAlign="center"
+            marginTop={2}
+          >
+            CICLOS PARA TERMINAR
+          </Text>
+        </Stack>
+      </Stack>
       
-      <TouchableOpacity style={styles.resetBtn} onPress={handleReset}>
-        <Text style={styles.resetBtnText}>RESETAR</Text>
-      </TouchableOpacity>
+      <Button
+        marginTop={24}
+        backgroundColor="#FF5C5C"
+        paddingHorizontal={32}
+        paddingVertical={12}
+        borderRadius={8}
+        onPress={handleReset}
+      >
+        <Text
+          color="#fff"
+          fontWeight="bold"
+          fontSize={16}
+        >
+          RESETAR
+        </Text>
+      </Button>
     </View>
   );
-}
-
-const styles = StyleSheet.create({
-  container: { 
-    flex: 1, 
-    backgroundColor: '#222', 
-    alignItems: 'center', 
-    justifyContent: 'center', 
-    paddingTop: 24 
-  },
-  header: { 
-    width: '100%', 
-    alignItems: 'center', 
-    marginBottom: 8 
-  },
-  headerTitle: { 
-    color: '#FFF700', 
-    fontWeight: 'bold', 
-    fontSize: 18, 
-    marginBottom: 4 
-  },
-  elapsed: { 
-    color: '#fff', 
-    fontWeight: 'bold', 
-    fontSize: 20, 
-    marginBottom: 2 
-  },
-  mainBlock: { 
-    width: '100%', 
-    alignItems: 'center', 
-    justifyContent: 'center', 
-    paddingVertical: 24 
-  },
-  stage: { 
-    fontSize: 32, 
-    fontWeight: 'bold', 
-    color: '#222', 
-    marginBottom: 8, 
-    letterSpacing: 2 
-  },
-  time: { 
-    fontSize: 96, 
-    fontWeight: 'bold', 
-    color: '#222', 
-    marginBottom: 8 
-  },
-  nextBlock: { 
-    width: '100%', 
-    alignItems: 'center', 
-    flexDirection: 'row', 
-    justifyContent: 'center', 
-    paddingVertical: 12 
-  },
-  nextLabel: { 
-    fontSize: 20, 
-    fontWeight: 'bold', 
-    color: '#222', 
-    marginRight: 8 
-  },
-  nextTime: { 
-    fontSize: 32, 
-    fontWeight: 'bold', 
-    color: '#222' 
-  },
-  bottomRow: { 
-    flexDirection: 'row', 
-    width: '100%', 
-    justifyContent: 'space-around', 
-    alignItems: 'center', 
-    marginTop: 24 
-  },
-  bottomItem: { 
-    alignItems: 'center', 
-    flex: 1 
-  },
-  bottomNumber: { 
-    fontSize: 48, 
-    fontWeight: 'bold' 
-  },
-  bottomLabel: { 
-    color: '#aaa', 
-    fontSize: 12, 
-    fontWeight: 'bold', 
-    textAlign: 'center', 
-    marginTop: 2 
-  },
-  centerBtn: { 
-    alignItems: 'center', 
-    justifyContent: 'center', 
-    flex: 1 
-  },
-  centerBtnCircle: { 
-    width: 80, 
-    height: 80, 
-    borderRadius: 40, 
-    backgroundColor: '#333', 
-    marginBottom: 4, 
-    borderWidth: 6, 
-    borderColor: '#FFF700', 
-    shadowColor: '#000', 
-    shadowOpacity: 0.2, 
-    shadowRadius: 8, 
-    elevation: 4, 
-    alignItems: 'center', 
-    justifyContent: 'center' 
-  },
-  centerBtnIcon: { 
-    color: '#FFF700', 
-    fontWeight: 'bold' 
-  },
-  centerBtnText: { 
-    color: '#FFF700', 
-    fontWeight: 'bold', 
-    fontSize: 16 
-  },
-  resetBtn: { 
-    marginTop: 24, 
-    backgroundColor: '#FF5C5C', 
-    paddingHorizontal: 32, 
-    paddingVertical: 12, 
-    borderRadius: 8 
-  },
-  resetBtnText: { 
-    color: '#fff', 
-    fontWeight: 'bold', 
-    fontSize: 16 
-  },
-}); 
+} 
