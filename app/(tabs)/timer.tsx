@@ -1,4 +1,5 @@
 import { useConfig } from '@/components/ConfigContext';
+import { Pause, Play } from '@tamagui/lucide-icons';
 import { Audio } from 'expo-av';
 import React, { useEffect, useRef, useState } from 'react';
 import { StyleSheet, Text, TouchableOpacity, Vibration, View } from 'react-native';
@@ -187,13 +188,14 @@ export default function TimerScreen() {
         
         <TouchableOpacity style={styles.centerBtn} onPress={isRunning ? () => setIsRunning(false) : handleStart}>
           <View style={styles.centerBtnCircle}>
-            <Text style={styles.centerBtnIcon}>
+           
               {isRunning ? (
-                <Text style={{fontSize: 30, fontWeight: 'bold'}}>❚❚</Text>
+                 <Pause size={30} color="#FFF700" />
               ) : (
-                <Text style={{fontSize: 30, fontWeight: 'bold'}}>▶</Text>
+                <Play size={30} color="#FFF700" />
+               
               )}
-            </Text>
+            
           </View>
           <Text style={styles.centerBtnText}>
             {isRunning ? 'PAUSAR' : rodada === 1 && ciclo === 1 && time === preparar ? 'INICIAR' : 'RETOMAR'}

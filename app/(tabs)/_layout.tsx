@@ -3,9 +3,9 @@ import React from 'react';
 import { Platform } from 'react-native';
 
 import { HapticTab } from '@/components/HapticTab';
-import { IconSymbol } from '@/components/ui/IconSymbol';
 import TabBarBackground from '@/components/ui/TabBarBackground';
 import { useColorScheme } from '@/hooks/useColorScheme';
+import { Settings2, Timer } from '@tamagui/lucide-icons';
 
 export default function TabLayout() {
   const colorScheme = useColorScheme();
@@ -47,14 +47,14 @@ export default function TabLayout() {
         name="timer"
         options={{
           title: 'Treino',
-          tabBarIcon: ({ color }) => <IconSymbol size={28} name="stopwatch" color={color} />,
+          tabBarIcon: ({ color }) => <Timer size={28}  color={color} />,
         }}
       />
       <Tabs.Screen
         name="settings"
         options={{
           title: 'Personalizar',
-          tabBarIcon: ({ color }) => <IconSymbol size={28} name="paintbrush" color={color} />,
+          tabBarIcon: ({ color }) =>  <Settings2 size={28}  color={color} />,
         }}
       />
     </Tabs>
