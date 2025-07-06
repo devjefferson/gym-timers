@@ -5,7 +5,6 @@ import { Platform } from 'react-native';
 import { HapticTab } from '@/components/HapticTab';
 import { IconSymbol } from '@/components/ui/IconSymbol';
 import TabBarBackground from '@/components/ui/TabBarBackground';
-import { Colors } from '@/constants/Colors';
 import { useColorScheme } from '@/hooks/useColorScheme';
 
 export default function TabLayout() {
@@ -14,30 +13,48 @@ export default function TabLayout() {
   return (
     <Tabs
       screenOptions={{
-        tabBarActiveTintColor: Colors[colorScheme ?? 'light'].tint,
+        tabBarActiveTintColor: '#FFF700',
+        tabBarInactiveTintColor: '#888',
         headerShown: false,
         tabBarButton: HapticTab,
         tabBarBackground: TabBarBackground,
         tabBarStyle: Platform.select({
           ios: {
-            // Use a transparent background on iOS to show the blur effect
             position: 'absolute',
+            backgroundColor: '#222',
+            borderTopWidth: 0,
+            elevation: 0,
+            shadowOpacity: 0,
           },
-          default: {},
+          default: {
+            backgroundColor: '#222',
+            borderTopWidth: 0,
+            elevation: 0,
+          },
         }),
+        tabBarLabelStyle: {
+          fontFamily: 'System',
+          fontWeight: 'bold',
+          fontSize: 12,
+          letterSpacing: 1,
+          marginTop: 2,
+        },
+        tabBarIconStyle: {
+          marginBottom: 2,
+        },
       }}>
       <Tabs.Screen
-        name="index"
+        name="timer"
         options={{
-          title: 'Home',
-          tabBarIcon: ({ color }) => <IconSymbol size={28} name="house.fill" color={color} />,
+          title: 'Treino',
+          tabBarIcon: ({ color }) => <IconSymbol size={28} name="stopwatch" color={color} />,
         }}
       />
       <Tabs.Screen
-        name="explore"
+        name="settings"
         options={{
-          title: 'Explore',
-          tabBarIcon: ({ color }) => <IconSymbol size={28} name="paperplane.fill" color={color} />,
+          title: 'Personalizar',
+          tabBarIcon: ({ color }) => <IconSymbol size={28} name="paintbrush" color={color} />,
         }}
       />
     </Tabs>
